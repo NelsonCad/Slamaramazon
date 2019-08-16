@@ -21,12 +21,14 @@ connection.connect(function (err) {
 function start() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
-       
+
         console.table(results);
 
         let items = [];
+
         for (i = 0; i < results.length; i++) {
-            items.push(results[i].prod_name);
+            items.push(JSON.stringify(results[i].prod_name));
+            product.push(results[i]);
         };
 
         inquirer
@@ -35,12 +37,13 @@ function start() {
                 message: "what would you like to buy?",
                 choices: items,
                 name: "product-choice"
-            }).then(function(choice) {
-                console.log(choice.product-choice);
+            }).then(function (choice) {
+                console.log(choice);
+
+            }).catch(function (err) {
+                console.log(err);
+                connection.end();
             });
-
-
-
         connection.end();
     })
 }
