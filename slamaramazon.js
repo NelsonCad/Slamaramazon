@@ -34,13 +34,27 @@ function start() {
                 message: "which department would you like to search into?",
                 choices: departments,
                 name: "department"
-            }).then(function (choice) {
-                
-
+            }).then(function (depot) {
+               productSelect(depot.department)
+               
             }).catch(function (err) {
                 console.log(err);
                 connection.end();
             });
-        connection.end();
-    })
+        
+    });
+}
+
+function productSelect(department) {
+    connection.query(
+        "SELECT * FROM products WHERE department_name = ?", [department], function (err, items) {
+            if (err) {
+                console.log(err);
+                connection.end();
+            };
+
+            console.log(items);
+
+        });
+
 }
