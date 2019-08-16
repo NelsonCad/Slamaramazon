@@ -19,26 +19,23 @@ connection.connect(function (err) {
 });
 
 function start() {
-    connection.query("SELECT * FROM products", function (err, results) {
+    connection.query("SELECT * FROM departments", function (err, depots) {
         if (err) throw err;
 
-        console.table(results);
+        let departments = [];
 
-        let items = [];
-
-        for (i = 0; i < results.length; i++) {
-            items.push(JSON.stringify(results[i].prod_name));
-            product.push(results[i]);
+        for (i = 0; i < depots.length; i++) {
+            departments.push(depots[i].title);
         };
 
         inquirer
             .prompt({
                 type: "list",
-                message: "what would you like to buy?",
-                choices: items,
-                name: "product-choice"
+                message: "which department would you like to search into?",
+                choices: departments,
+                name: "department"
             }).then(function (choice) {
-                console.log(choice);
+                
 
             }).catch(function (err) {
                 console.log(err);
