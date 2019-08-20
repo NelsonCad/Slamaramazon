@@ -46,7 +46,7 @@ function anotherPurchase() {
     inquirer.prompt(
         {
             type: "list",
-            message: "would you like to buy something else?",
+            message: "would you like to try and buy something else?",
             choices: ["yes", "no"],
             name: "anotherPurchase"
         }
@@ -57,9 +57,10 @@ function anotherPurchase() {
             start();
         } else {
             connection.end();
-        }
+        };
     });
-}
+};
+
 function productSelect(department) {
     connection.query(
         "SELECT prod_name, price, quantity FROM products WHERE department = ?", [department], function (err, items) {
@@ -95,11 +96,10 @@ function productSelect(department) {
                         anotherPurchase();
                     } else {
                         console.log("we do not have that many in stock!");
-                        start();
+                        anotherPurchase();
                     }
 
-                })
-                connection.end();
+                });
             });
         });
 }
