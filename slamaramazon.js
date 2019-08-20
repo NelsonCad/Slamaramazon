@@ -13,34 +13,15 @@ let connection = mysql.createConnection({
 });
 
 connection.connect(function (err) {
-    if (err) throw err;
+    if (err) { throw err; }
 
     start();
 });
 
 
-function anotherPurchase() {
-    inquirer.prompt(
-        {
-            type: "list",
-            message: "would you like to buy something else?",
-            choices: ["yes", "no"],
-            name: "anotherPurchase"
-        }
-    ).then(function (answer) {
-
-        if (answer.anotherPurchase === "yes") {
-            start();
-        } else {
-            connection.end();
-        }
-    });
-}
-
-
 function start() {
     connection.query("SELECT * FROM departments", function (err, depots) {
-        if (err) throw err;
+        if (err) { throw err; }
 
         let departments = [];
 
@@ -57,22 +38,32 @@ function start() {
             }
         ).then(function (depot) {
             productSelect(depot.department)
-
-        }).catch(function (err) {
-            console.log(err);
-            connection.end();
         });
+    });
+};
 
+function anotherPurchase() {
+    inquirer.prompt(
+        {
+            type: "list",
+            message: "would you like to buy something else?",
+            choices: ["yes", "no"],
+            name: "anotherPurchase"
+        }
+    ).then(function (answer) {
+
+        if (answer.anotherPurchase === "yes") {
+
+            start();
+        } else {
+            connection.end();
+        }
     });
 }
-
 function productSelect(department) {
     connection.query(
         "SELECT prod_name, price, quantity FROM products WHERE department = ?", [department], function (err, items) {
-            if (err) {
-                console.log(err);
-                connection.end();
-            };
+            if (err) { throw err; }
 
             console.table(items);
 
@@ -95,28 +86,20 @@ function productSelect(department) {
                     name: "quantity"
                 }
             ]).then(function (purchase) {
-                
+
                 connection.query("SELECT * FROM products WHERE prod_name = ?", [purchase.product], function (err, chosenItem) {
-                    if (err) {
-                        console.log(err);
-                        connection.end();
-                    }
+                    if (err) { throw err; }
+
                     if (purchase.quantity <= chosenItem) {
-                        console.log("thank you for your purchase of this item! you bill is $" + (chosenItem.price * purchase.quantity))
+                        console.log("thank you for your purchase of this item! you bill is $" + (chosenItem.price * parseInt(purchase.quantity)));
                         anotherPurchase();
                     } else {
                         console.log("we do not have that many in stock!");
+                        start();
                     }
-
 
                 })
                 connection.end();
-
-            }).catch(function(err) {
-                console.log(err);
-                connection.end();
-            })
-
+            });
         });
-
 }
