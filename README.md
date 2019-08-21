@@ -12,7 +12,7 @@ you will then be promted to which department you want to browse, choose any of t
 
 Then choose the item you want to buy and how many of them you want.
 
-![Item choice image](https://github.com/NelsonCad/Slamaramazon/blob/master/images/blob/master/images/itemChoice.PNG "Choose an item from within that department")
+![Item choice image](https://github.com/NelsonCad/Slamaramazon/blob/master/images/itemChoice.PNG "Choose an item from within that department")
 
 ![quantity decision](https://github.com/NelsonCad/Slamaramazon/blob/master/images/quantitySelect.PNG "How many do you want?")
 
