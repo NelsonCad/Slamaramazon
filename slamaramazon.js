@@ -13,7 +13,7 @@ let connection = mysql.createConnection({
 });
 
 connection.connect(function (err) {
-    if (err) { throw err; }
+    if (err) throw err;
 
     start();
 });
@@ -21,7 +21,7 @@ connection.connect(function (err) {
 
 function start() {
     connection.query("SELECT * FROM departments", function (err, depots) {
-        if (err) { throw err; }
+        if (err) throw err;
 
         let departments = [];
 
@@ -32,7 +32,7 @@ function start() {
         inquirer.prompt(
             {
                 type: "list",
-                message: "which department would you like to search into?",
+                message: "which department would you like to browse?",
                 choices: departments,
                 name: "department"
             }
@@ -63,8 +63,8 @@ function anotherPurchase() {
 
 function productSelect(department) {
     connection.query(
-        "SELECT prod_name, price, quantity FROM products WHERE department = ?", [department], function (err, items) {
-            if (err) { throw err; }
+        "SELECT * FROM products WHERE department = ?", [department], function (err, items) {
+            if (err) throw err;
 
             console.table(items);
 
@@ -89,16 +89,27 @@ function productSelect(department) {
             ]).then(function (purchase) {
 
                 connection.query("SELECT * FROM products WHERE prod_name = ?", [purchase.product], function (err, chosenItem) {
-                    if (err) { throw err; }
+                    if (err) throw err;
 
-                    if (purchase.quantity <= chosenItem) {
-                        console.log("thank you for your purchase of this item! you bill is $" + (chosenItem.price * parseInt(purchase.quantity)));
-                        anotherPurchase();
+                    if (purchase.quantity <= chosenItem[0].quantity) {
+
+                        let bill = chosenItem[0].price * parseInt(purchase.quantity);
+                        let newStock = chosenItem[0].quantity - parseInt(purchase.quantity);
+
+                        console.log("Thank you for your purchase! your bill is $" + bill);
+
+                        connection.query("UPDATE products SET ? WHERE ?", [{quantity: newStock}, {id: chosenItem[0].id}], function (err,res) {
+                            if (err) throw err;
+
+                            console.log("units of " + chosenItem[0].prod_name + " has been updated.")
+                            
+                            anotherPurchase();
+                        });
+
                     } else {
                         console.log("we do not have that many in stock!");
                         anotherPurchase();
-                    }
-
+                    };
                 });
             });
         });
